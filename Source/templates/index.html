@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deepfake Video Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #ccc;
+            max-width: 600px;
+            margin: auto;
+        }
+        input[type="file"] {
+            margin-top: 10px;
+        }
+        .btn {
+            margin-top: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            font-size: 20px;
+        }
+        .real { color: green; }
+        .fake { color: red; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Phát hiện video Deepfake</h2>
+
+    <!-- Form to upload video -->
+    <form action="/predict" method="post" enctype="multipart/form-data" onsubmit="clearPreviousResults()">
+        <label>Chọn video:</label><br>
+        <input type="file" name="video" accept="video/*" required>
+        <br>
+        <button class="btn" type="submit">Phân tích</button>
+    </form>
+
+    <div id="loading" style="display:none; margin-top: 20px;">🔄 Đang xử lý video...</div>
+
+    <!-- Section to display results -->
+    <div id="result-section">
+        {% if error %}
+            <p class="result fake">Error: {{ error }}</p>
+        {% endif %}
+
+        {% if result %}
+            <div class="result">
+                <p>Số khuôn mặt đã phát hiện được: <strong>{{ result.total_faces }}</strong></p>
+                <p>Số khuôn mặt giả mạo: <strong>{{ result.fake_count }}</strong></p>
+                <p>Tỷ lệ giả mạo: <strong>{{ result.fake_ratio * 100 }}%</strong></p>
+                <p>Kết quả:
+                    {% if result.prediction == "FAKE" %}
+                        <span class="fake"><strong>FAKE</strong></span>
+                    {% else %}
+                        <span class="real"><strong>REAL</strong></span>
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JS xử lý submit -->
+<script>
+    document.querySelector('form').onsubmit = function() {
+        document.getElementById('result-section').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+    };
+</script>
+</body>
+</html>

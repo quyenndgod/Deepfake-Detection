@@ -1,0 +1,6 @@
+flask
+opencv-python
+tensorflow
+numpy
+
+pip install <dependency>
